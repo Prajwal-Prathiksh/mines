@@ -60,7 +60,7 @@ class Board(object):
             if self.mines != -1:
                 solver.add_information(mines.Information(self.spaces, self.mines))
 
-            for (space, (value, adjacent)) in self.known_spaces.iteritems():
+            for (space, (value, adjacent)) in self.known_spaces.items():
                 solver.add_known_value(space, value)
                 if adjacent != -1:
                     solver.add_information(mines.Information(frozenset(self.get_adjacent_spaces(space)), adjacent))

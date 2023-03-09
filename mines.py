@@ -37,13 +37,8 @@ else:
     # Therefore, don't bother making any threads on other implementations.
     CPU_COUNT = 1
 
-try:
-    import thread
-    import threading
-except ImportError:
-    import dummy_threading as threading
-    import dummy_thread as thread
-    CPU_COUNT = 1
+import _thread
+import threading
 
 class exception(Exception):
     pass
@@ -58,7 +53,7 @@ def choose(n, k):
     if 0 <= k <= n:
         ntok = 1
         ktok = 1
-        for t in xrange(1, min(k, n - k) + 1):
+        for t in range(1, min(k, n - k) + 1):
             ntok *= n
             ktok *= t
             n -= 1
@@ -115,7 +110,7 @@ class TaskQueue(object):
         f, args, kwargs, promise = task
         try:
             promise.set(f(*args, **kwargs))
-        except BaseException, e:
+        except BaseException as e:
             promise.set(e)
 
     def run_one(self, block=True):
@@ -183,7 +178,7 @@ class Solver(object):
         result = Solver(self.spaces)
         result.solved_spaces = self.solved_spaces.copy()
         result.information = self.information.copy()
-        for key, value in self.informations_for_space.iteritems():
+        for key, value in self.informations_for_space.items():
             result.informations_for_space[key] = value.copy()
         return result
 
@@ -391,7 +386,7 @@ class Solver(object):
         if len(solver.solved_spaces) != len(solver.spaces):
             clusters = solver.get_clusters()
 
-            states_validated = set(solver.solved_spaces.iteritems())
+            states_validated = set(solver.solved_spaces.items())
 
             for cluster in clusters:
                 cluster_solver = Solver.solver_from_cluster(cluster)
@@ -444,7 +439,7 @@ class Solver(object):
 
             return states_validated
         else:
-            return solver.solved_spaces.iteritems()
+            return solver.solved_spaces.items()
 
     def solve_cluster(self, cluster):
         base_solver = Solver.solver_from_cluster(cluster)
@@ -589,7 +584,7 @@ def picma_main(width, height):
     try:
         solver.solve()
     except UnsolveableException:
-        print "This configuration has no solutions."
+        print("This configuration has no solutions.")
         return
 
     for y in range(height):
@@ -598,7 +593,7 @@ def picma_main(width, height):
         sys.stdout.write('\n')
 
     for i in solver.information:
-        print i
+        print(i)
 
 def mines_main(width, height, total):
     spaces = set((x,y) for x in range(width) for y in range(height))
@@ -624,7 +619,7 @@ def mines_main(width, height, total):
     try:
         solver.solve()
     except UnsolveableException:
-        print "This configuration has no solutions."
+        print =("This configuration has no solutions.")
         return
 
     sys.stdout.write('\n')
@@ -635,20 +630,20 @@ def mines_main(width, height, total):
         sys.stdout.write('\n')
 
     for i in solver.information:
-        print i
+        print(i)
 
     probabilities, total = solver.get_probabilities()
 
-    probabilities = [(probability, space) for (space, probability) in probabilities.iteritems()]
+    probabilities = [(probability, space) for (space, probability) in probabilities.items()]
 
     probabilities.sort()
 
-    print 'total possible arrangements:', total
+    print('total possible arrangements:', total)
 
     total = float(total)
 
     for probability, space in probabilities:
-        print space, probability / total
+        print(space, probability / total)
 
 class MineMap(object):
     def __init__(self, spaces):
@@ -712,7 +707,7 @@ class PicmaPuzzle(object):
 
     def create_solver(self):
         result = Solver(self.minemap.spaces)
-        for key, value in self.known_spaces.iteritems():
+        for key, value in self.known_spaces.items():
             result.add_information(Information(frozenset(self.minemap.get_bordering_spaces(key)), value))
         return result
 
@@ -756,7 +751,7 @@ def picmagen(rectmap, random):
     try:
         puzzle.make_solveable(random)
     except ValueError:
-        print "unsolveable configuration:"
+        print("unsolveable configuration:")
         for y in range(rectmap.height):
             for x in range(rectmap.width):
                 sys.stdout.write(str(rectmap[x, y]))
@@ -769,9 +764,9 @@ def picmagen(rectmap, random):
             sys.stdout.write(str(puzzle.known_spaces.get((x, y), '-')))
         sys.stdout.write('\n')
 
-    print "hits: ", next(global_clusters_hits)
-    print "misses: ", next(global_clusters_misses)
-    print "solves: ", next(global_clusters_solves)
+    print("hits: ", next(global_clusters_hits))
+    print("misses: ", next(global_clusters_misses))
+    print("solves: ", next(global_clusters_solves))
 
 def picmagen_main(width, height):
     import random

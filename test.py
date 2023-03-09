@@ -317,7 +317,7 @@ class RandomTests(unittest.TestCase):
             raise
 
     def test_random(self):
-        self.run_random_tests(random.SystemRandom().randint(-sys.maxint-1, sys.maxint))
+        self.run_random_tests(random.SystemRandom().randint(-sys.maxsize-1, sys.maxsize))
 
 if __name__ == '__main__':
     unittest.main()
