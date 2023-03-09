@@ -269,20 +269,6 @@ class DreamBoard(object):
         x, y = min(items, key=self._hint_score)[0]
         self.set_value(x, y, CLEAR_Q)
         return True
-        
-        total = sum(probabilities.itervalues())
-
-        if total == 0:
-            return False
-        
-        choice = random.randint(1, total)
-
-        cumsum = 0
-        for x, y in probabilities:
-            cumsum += probabilities[x, y]
-            if cumsum >= choice:
-                self.clear_space(x, y)
-                return True
 
     def maybe_hint(self):
         solver = self.get_solver()
@@ -302,6 +288,12 @@ def draw_board(board, switches):
 
     if '/p' in switches:
         probabilities, total = board.get_mine_probabilities()
+        # Clear terminal
+        print('\x1b[2J', end='')
+        print('Total:', total)
+        print('Probabilities:')
+        for i in probabilities:
+            print(i, probabilities[i]/total)
 
     for x in range(board.width):
         for y in range(board.height):
@@ -314,6 +306,11 @@ def draw_board(board, switches):
                 if (x, y) in board.solver.solved_spaces:
                     g = board.solver.solved_spaces[x, y] * 255
                     border = 1
+                    if g == 255:
+                        txt = " --> (mine)"
+                    else:
+                        txt = " --> (clear)"
+                    print('Solved Spaces: ', [x, y], txt)
                 elif (x, y) in probabilities:
                     g = int(probabilities[x, y] * 255 // total)
                     border = 2
